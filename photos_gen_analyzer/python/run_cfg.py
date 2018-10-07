@@ -4,7 +4,7 @@ process = cms.Process("DY")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 
 #process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
@@ -43,8 +43,8 @@ process.source = cms.Source("PoolSource",
 #'file:/cms/ldap_home/jhchoi/PHOTOS_Study/BY_MASS_180730/10to50/LHEGEN_CMSSW_10_3_X_2018-09-30-2300/JOB_10to50_addvirtual_gamma_pythiaPhoton_off_showerL_off_photos_on_50000evt_40que_random/OUTPUT_11.root'
 #'file:/cms/ldap_home/jhchoi/PHOTOS_Study/BY_MASS_180730/10to50/LHEGEN_CMSSW_10_3_X_2018-09-30-2300/JOB_10to50_addvirtual_Z_pythiaPhoton_off_showerL_off_photos_on_50000evt_40que_random/OUTPUT_0.root'
 #'file:/cms/ldap_home/jhchoi/PHOTOS_Study/BY_MASS_180730/50plus/latest_rel/LHEGEN_CMSSW_10_3_X_2018-09-30-2300/JOB_50plus_addvirtual_gamma_pythiaPhoton_off_showerL_off_photos_on_50000evt_40que_random/OUTPUT_0.root'
-'file:/cms/ldap_home/jhchoi/PHOTOS_Study/BY_MASS_180730/50plus/latest_rel/LHEGEN_CMSSW_10_3_X_2018-09-30-2300/JOB_50plus_addvirtual_off_pythiaPhoton_off_showerL_off_photos_on_50000evt_40que_random__2/OUTPUT_0.root'
-
+#'file:/cms/ldap_home/jhchoi/PHOTOS_Study/BY_MASS_180730/50plus/latest_rel/LHEGEN_CMSSW_10_3_X_2018-09-30-2300/JOB_50plus_addvirtual_off_pythiaPhoton_off_showerL_off_photos_on_50000evt_40que_random__2/OUTPUT_0.root'
+'file:/cms/ldap_home/jhchoi/PHOTOS_Study/BY_MASS_180730/200to400/latest_rel/LHEGEN_CMSSW_10_3_X_2018-09-30-2300/JOB_200to400_addvirtual_gamma_pythiaPhoton_off_showerL_off_photos_on_50000evt_80que_random__2/OUTPUT_10.root'
 )
 )
        

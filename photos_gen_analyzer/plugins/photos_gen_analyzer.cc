@@ -79,11 +79,30 @@ class photos_gen_analyzer : public edm::one::EDAnalyzer<edm::one::SharedResource
   edm::EDGetTokenT<GenEventInfoProduct> genInfo_Token;
   edm::EDGetTokenT<LHEEventProduct> LHEInfo_Token;
 
-  TTree *photoninfo;
-  TTree *lep1;
-  TTree *lep2;
-  TTree *weights;
+  
+  TTree *Tphoton;
+  TTree *Tlep1;
+  TTree *Tlep2;
+  TTree *Tboson; 
+  TTree *Tweight;
 
+  vector<double> photon_px, photon_py, photon_pz, photon_ee; vector<int> photon_isfsr;
+  double lep1_px, lep1_py, lep1_pz, lep1_ee;
+  double lep2_px, lep2_py, lep2_pz, lep2_ee;
+  double boson_px, boson_py, boson_pz, boson_ee; //int isgamma, isz;   
+  double weight;
+
+  
+  //double lep1_px, lep1_py, lep1_pz, lep1_ee; 
+  // double lep2_px, lep2_py, lep2_pz, lep2_ee;
+  //double boson_px, boson_py, boson_pz, boson_ee; //int isgamma, isz;
+  /*
+  TTree *Tweight; double weight;
+  TTree *Tphoton; double dR1,dR2,dRboson,dPhi1,dPhi2,dPhiboson; int isfsr;
+  TTree *Tlep1; double lep1_dRboson,lep1_dPhiboson;
+  TTree *Tlep2; double lep2_dRboson,lep2_dPhiboson;
+  TTree *Tboson; double dR12, dPhi12;
+  */
 };
 
 //
@@ -128,7 +147,13 @@ photos_gen_analyzer::~photos_gen_analyzer()
 void
 photos_gen_analyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
- 
+
+  photon_px.clear(), photon_py.clear(), photon_pz.clear(), photon_ee.clear(); photon_isfsr.clear();
+  lep1_px=0, lep1_py=0, lep1_pz=0, lep1_ee=0; 
+   lep2_px=0, lep2_py=0, lep2_pz=0, lep2_ee=0;
+   boson_px=0, boson_py=0, boson_pz=0, boson_ee=0; //int isgamma, isz;
+   weight=1; 
+
   int leppid=13;
   using namespace edm;
    Handle<reco::GenParticleCollection> genParticles;
@@ -140,8 +165,10 @@ photos_gen_analyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    iEvent.getByToken(LHEInfo_Token, LHEInfo);
 
 
-   double   weight=genInfo->weight();
-   vector<int> hardpid;
+   weight = genInfo->weight();
+   // Tweight->Fill();
+   
+vector<int> hardpid;
    hardpid.push_back(23);//Z boson 
    hardpid.push_back(22);//Z boson
    hardpid.push_back(leppid);
@@ -228,8 +255,9 @@ int hardindexsize=   hardindex.size();
    vector<int> vlep1_i;//why use container? => there could be an event where conversion pair is.
    vector<int> vlep2_i;
 
-   double lep1_px=0, lep1_py=0, lep1_pz=0, lep1_ee=0;
-   double lep2_px=0, lep2_py=0, lep2_pz=0, lep2_ee=0;
+   lep1_px=0, lep1_py=0, lep1_pz=0, lep1_ee=0;
+   lep2_px=0, lep2_py=0, lep2_pz=0, lep2_ee=0;
+   
    for(int i = 0; i < gensize; ++ i) {
      const GenParticle & p = (*genParticles)[i];
      int status = p.status();
@@ -311,6 +339,9 @@ int hardindexsize=   hardindex.size();
    TLorentzVector v1,v2, vboson;
    v1.SetPxPyPzE(lep1_px,lep1_py,lep1_pz,lep1_ee);
    v2.SetPxPyPzE(lep2_px,lep2_py,lep2_pz,lep2_ee);
+   
+   
+   
 
    int nphoton=0;
    
@@ -331,8 +362,6 @@ int hardindexsize=   hardindex.size();
      if(mother==-1) continue;
      if(i==lep1_i) continue;
      if(i==lep2_i) continue;
-     double dR1 = vfsr.DeltaR(v1);
-     double dR2 = vfsr.DeltaR(v2);
      if(!fromhardDY) continue;
      fsr_px=fsr_px+px;
      fsr_py=fsr_py+py;
@@ -342,12 +371,35 @@ int hardindexsize=   hardindex.size();
      
 
    }//for all genparticles
-   vboson.SetPxPyPzE(lep1_px+lep2_px+fsr_px, lep1_py+lep2_py+fsr_py,lep1_pz+lep2_pz+fsr_pz,lep1_ee+lep2_ee+fsr_ee);
+   boson_px=lep1_px+lep2_px+fsr_px;
+   boson_py=lep1_py+lep2_py+fsr_py;
+   boson_pz=lep1_pz+lep2_pz+fsr_pz;
+   boson_ee=lep1_ee+lep2_ee+fsr_ee;
 
-   cout<<"####event info###"<<endl;
-   cout<<"lep1_i="<<lep1_i<<" lep2_i="<<lep2_i<<endl;
-   cout<<"vboson.M()="<<vboson.M()<<" vboson.Perp()="<<vboson.Perp()<<endl;
+   vboson.SetPxPyPzE(boson_px,boson_py,boson_pz,boson_ee);
+   /*
+   lep1_dRboson=v1.DeltaR(vboson);
+   lep2_dRboson=v2.DeltaR(vboson);
+
+   lep1_dPhiboson=v1.DeltaPhi(vboson);
+   lep2_dPhiboson=v2.DeltaPhi(vboson);
+
+   dR12=v1.DeltaR(v2);
+
+   dPhi12=v1.DeltaPhi(v2);
+   */
+ 
+   //   cout<<"####event info###"<<endl;
+   //cout<<"lep1_i="<<lep1_i<<" lep2_i="<<lep2_i<<endl;
+   //cout<<"vboson.M()="<<vboson.M()<<" vboson.Perp()="<<vboson.Perp()<<endl;
+  
+   //   double dR12 = v1.DeltaR(v2);
+   // double dPhi12=v1.DeltaPhi(v2);
+  
+   //Do analysis//
    for(int i = 0; i < gensize; ++ i) {
+     // double dR1=-99, dR2=-99, dRboson=-99;
+     //  double dPhi1=-99, dPhi2=-99, dPhiboson=-99;
      const GenParticle & p = (*genParticles)[i];
      int id = p.pdgId();
      int status = p.status();
@@ -355,12 +407,54 @@ int hardindexsize=   hardindex.size();
      double py = p.py();
      double pz = p.pz();
      double ee = p.energy();
-     int mother = gen_motherindex[i];
-     int fromhardDY = gen_fromhardDY[i];
-     if(fromhardDY)     cout<<"i="<<i<<" id="<<id<<" status="<<status<<" mother="<<mother<<" fromhardDY="<<fromhardDY<<" px="<<px <<" py="<<py<<" pz="<<pz<<" ee="<<ee<<endl;
-   }
+     //      TLorentzVector v; v.SetPxPyPzE(px,py,pz,ee);
+     //double mm=v.M();
+     // int mother = gen_motherindex[i];
+      int fromhardDY = gen_fromhardDY[i];
+     //     if(fromhardDY)     cout<<"i="<<i<<" id="<<id<<" status="<<status<<" mother="<<mother<<" fromhardDY="<<fromhardDY<<" mm="<<mm<<" px="<<px <<" py="<<py<<" pz="<<pz<<" ee="<<ee<<endl;
 
 
+     if((id==22)&&(status==1)){//photons
+     
+       /*
+	 TLorentzVector v; v.SetPxPyPzE(px,py,pz,ee);
+       dR1=v1.DeltaR(v);
+       dR2=v2.DeltaR(v);
+       dRboson=vboson.DeltaR(v);
+       
+       dPhi1=v1.DeltaR(v);
+       dPhi2=v2.DeltaR(v);
+       dPhiboson=vboson.DeltaR(v);
+       
+       if(fromhardDY) isfsr=1;
+       else isfsr=0;
+       */
+       photon_px.push_back(px);
+       photon_py.push_back(py);
+       photon_pz.push_back(pz);
+       photon_ee.push_back(ee);
+       if(fromhardDY) photon_isfsr.push_back(1);
+       else photon_isfsr.push_back(0); 
+       
+       
+
+
+     }//end of if photon
+   }//end of all genptls
+       Tphoton->Fill();
+       Tlep1->Fill();
+       Tlep2->Fill();
+       Tboson->Fill();
+       Tweight->Fill();
+
+   /*
+   cout<<"######"<<endl;
+   cout<<"photon_px.size()="<<photon_px.size()<<endl;
+   cout<<"photon_py.size()="<<photon_py.size()<<endl;
+   cout<<"photon_pz.size()="<<photon_pz.size()<<endl;
+   cout<<"photon_ee.size()="<<photon_ee.size()<<endl;
+   cout<<"photon_isfsr.size()="<<photon_isfsr.size()<<endl;
+   */
 }
 
 
@@ -368,7 +462,65 @@ int hardindexsize=   hardindex.size();
 void
 photos_gen_analyzer::beginJob()
 {
-}
+  edm::Service<TFileService> fs;
+  Tphoton = fs->make<TTree>("Tphoton","Tphoton");
+  Tlep1 = fs->make<TTree>("Tlep1","Tlep1");
+  Tlep2 = fs->make<TTree>("Tlep2","Tlep2");
+  Tboson = fs->make<TTree>("Tboson","Tboson");
+  Tweight = fs->make<TTree>("Tweight","Tweight");
+
+  /*
+  Tlep1->Branch("lep1_dRboson",&lep1_dRboson,"lep1_dRboson/D");
+  Tlep1->Branch("lep1_dPhiboson",&lep1_dPhiboson,"lep1_dPhiboson/D");
+  
+  Tlep2->Branch("lep2_dRboson",&lep2_dRboson,"lep2_dRboson/D");
+  Tlep2->Branch("lep2_dPhiboson",&lep2_dPhiboson,"lep2_dPhiboson/D");
+
+  Tboson->Branch("dR12",&dR12,"dR12/D");
+  Tboson->Branch("dPhi12",&dPhi12,"dPhi12/D");
+  */
+  
+  Tlep1->Branch("px",&lep1_px,"px/D");
+  Tlep1->Branch("py",&lep1_py,"py/D");
+  Tlep1->Branch("pz",&lep1_pz,"pz/D");
+  Tlep1->Branch("ee",&lep1_ee,"ee/D");
+  
+  Tlep2->Branch("px",&lep2_px,"px/D");
+  Tlep2->Branch("py",&lep2_py,"py/D");
+  Tlep2->Branch("pz",&lep2_pz,"pz/D");
+  Tlep2->Branch("ee",&lep2_ee,"ee/D");
+
+  Tboson->Branch("px",&boson_px,"px/D");
+  Tboson->Branch("py",&boson_py,"py/D");
+  Tboson->Branch("pz",&boson_pz,"pz/D");
+  Tboson->Branch("ee",&boson_ee,"ee/D");
+  
+  // Tboson->Branch("isgamma", &boson_isgamma, "isgamma/I");
+  // Tboson->Branch("isz", &boson_isz, "isz/I");
+
+  Tweight->Branch("weight",&weight,"weight/D");
+  /*
+  Tphoton->Branch("dR1",&dR1, "dR1/D");
+  Tphoton->Branch("dR2",&dR2, "dR2/D");
+  Tphoton->Branch("dRboson",&dRboson, "dRboson/D");
+ 
+  Tphoton->Branch("dPhi1",&dPhi1, "dPhi1/D");
+  Tphoton->Branch("dPhi2",&dPhi2, "dPhi2/D");
+  Tphoton->Branch("dPhiboson",&dPhiboson, "dPhiboson/D");
+
+  Tphoton->Branch("isfsr",&isfsr, "isfsr/I");
+
+  */
+
+
+  
+  Tphoton->Branch("px","vector<double>",&photon_px);
+  Tphoton->Branch("py","vector<double>",&photon_py);
+  Tphoton->Branch("pz","vector<double>",&photon_pz);
+  Tphoton->Branch("ee","vector<double>",&photon_ee);
+  Tphoton->Branch("isfsr","vector<int>",&photon_isfsr);
+  
+  }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
