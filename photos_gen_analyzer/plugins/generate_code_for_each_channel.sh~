@@ -1,0 +1,6 @@
+cp photos_gen_analyzer.cc photos_gen_analyzer_muon.cc
+find . -name photos_gen_analyzer_muon.cc | xargs perl -pi -e s/photos_gen_analyzer/photos_gen_analyzer_muon/g
+
+
+cp photos_gen_analyzer.cc photos_gen_analyzer_electron.cc
+find . -name photos_gen_analyzer_electron.cc | xargs perl -pi -e s/photos_gen_analyzer/photos_gen_analyzer_electron/g

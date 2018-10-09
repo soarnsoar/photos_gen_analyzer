@@ -1,4 +1,4 @@
-git rm --cached *~
-git rm --cached *.pyc
-git rm --cached \#*
-git rm --cached *.root
+*~
+*pyc
+\#*
+*.root

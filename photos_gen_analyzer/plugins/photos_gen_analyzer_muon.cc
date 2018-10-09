@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    photos_gen_analyzer/photos_gen_analyzer
-// Class:      photos_gen_analyzer
+// Package:    photos_gen_analyzer_muon/photos_gen_analyzer_muon
+// Class:      photos_gen_analyzer_muon
 //
-/**\class photos_gen_analyzer photos_gen_analyzer.cc photos_gen_analyzer/photos_gen_analyzer/plugins/photos_gen_analyzer.cc
+/**\class photos_gen_analyzer_muon photos_gen_analyzer_muon.cc photos_gen_analyzer_muon/photos_gen_analyzer_muon/plugins/photos_gen_analyzer_muon.cc
 
  Description: [one line class summary]
 
@@ -61,10 +61,10 @@ using namespace std;
 
 
 
-class photos_gen_analyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class photos_gen_analyzer_muon : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
    public:
-      explicit photos_gen_analyzer(const edm::ParameterSet&);
-      ~photos_gen_analyzer();
+      explicit photos_gen_analyzer_muon(const edm::ParameterSet&);
+      ~photos_gen_analyzer_muon();
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -135,7 +135,7 @@ class photos_gen_analyzer : public edm::one::EDAnalyzer<edm::one::SharedResource
 //
 // constructors and destructor
 //
-photos_gen_analyzer::photos_gen_analyzer(const edm::ParameterSet& iConfig)
+photos_gen_analyzer_muon::photos_gen_analyzer_muon(const edm::ParameterSet& iConfig)
 // :
 // tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
 
@@ -149,7 +149,7 @@ photos_gen_analyzer::photos_gen_analyzer(const edm::ParameterSet& iConfig)
 }
 
 
-photos_gen_analyzer::~photos_gen_analyzer()
+photos_gen_analyzer_muon::~photos_gen_analyzer_muon()
 {
 
    // do anything here that needs to be done at desctruction time
@@ -164,7 +164,7 @@ photos_gen_analyzer::~photos_gen_analyzer()
 
 // ------------ method called for each event  ------------
 void
-photos_gen_analyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+photos_gen_analyzer_muon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
   photon_px.clear(), photon_py.clear(), photon_pz.clear(), photon_ee.clear(); photon_isfsr.clear();
@@ -528,7 +528,7 @@ int hardindexsize=   hardindex.size();
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-photos_gen_analyzer::beginJob()
+photos_gen_analyzer_muon::beginJob()
 {
   edm::Service<TFileService> fs;
   Tphoton = fs->make<TTree>("Tphoton","Tphoton");
@@ -630,13 +630,13 @@ photos_gen_analyzer::beginJob()
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-photos_gen_analyzer::endJob()
+photos_gen_analyzer_muon::endJob()
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-photos_gen_analyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+photos_gen_analyzer_muon::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -651,4 +651,4 @@ photos_gen_analyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptio
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(photos_gen_analyzer);
+DEFINE_FWK_MODULE(photos_gen_analyzer_muon);
